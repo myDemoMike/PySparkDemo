@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import jieba
-import reload
-from pyspark.ml.classification import NaiveBayes
-from pyspark.ml.evaluation import MulticlassClassificationEvaluator
-from pyspark.ml.feature import HashingTF, StringIndexer, Tokenizer, IDF
 from pyspark.sql import SparkSession
+import jieba
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+from pyspark.ml.classification import NaiveBayes
+from pyspark.ml.feature import HashingTF, StringIndexer, Tokenizer, IDF
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+import reload
+# 解决编码问题
+import sys
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 # 创建sparkSession
 spark = SparkSession.builder.appName("NB Test").enableHiveSupport().getOrCreate()
