@@ -16,7 +16,6 @@ spark = SparkSession \
 #    .config("spark.sql.warehouse.dir", warehouse_location) \
 #    .config("hive.groupby.skewindta", "true") \
 
-
 d1 = spark.sql("""
 select *
 from portrait.ind_cus_attr_coll ca

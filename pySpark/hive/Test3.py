@@ -13,7 +13,9 @@ spark = SparkSession \
     .builder \
     .appName("pyspark") \
     .config("spark.sql.warehouse.dir", warehouse_location) \
-    .config("hive.groupby.skewindta","true") \
+    .config("hive.groupby.skewindta", "true") \
+    .config("spark.sql.crossJoin.enabled", "true") \
+    .config("spark.shuffle.consolidateFiles", "true") \
     .enableHiveSupport().getOrCreate()
 
 data11 = spark.sql(
@@ -33,14 +35,16 @@ where t.syskey = cf.syskey and( t.flag_out_of_contact = 1
     """
 ).distinct();
 
+
 def getPhone(phone):
     phone_pat = re.compile(
         "[1][3,5,8,9][0-9]{9}$|^[9][2,8][0-9]{9}$|^14[5|6|7|8|9][0-9]{8}$|^16[1|2|4|5|6|7][0-9]{8}$|^17[0-8][0-9]{8}")
     res = phone_pat.search(phone)
     if res is None:
-        return "0";
+        return "0"
     else:
-        return "1";
+        return "1"
+
 
 seg_udf = udf(getPhone, StringType())
 data22 = data11.filter(data11.phoneNum.isNotNull())
@@ -49,3 +53,6 @@ result = data22.distinct().filter(seg_udf(data22.phoneNum) == "1").dropDuplicate
 print("数据量" + str(result.count()))
 # quchonghou    graph.test_05_09
 result.write.mode("overwrite").saveAsTable("graph.test_06_10")
+
+# spark2-submit  --master yarn --deploy-mode cluster --num-executors 4 --executor-memory 10G --archives hdfs:///anaconda3.zip#anaconda3 --files /etc/spark2/conf.cloudera.spark2_on_yarn/yarn-conf/hive-site.xml
+# --conf spark.yarn.appMasterEnv.PYSPARK_PYTHON=./anaconda3/anaconda3/bin/python3 LishuData.py

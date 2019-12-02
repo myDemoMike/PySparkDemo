@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/python
 
-import unicode
 import sys
 
 

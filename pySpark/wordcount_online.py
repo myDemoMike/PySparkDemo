@@ -1,4 +1,5 @@
 import re
+
 from pyspark import SparkConf, SparkContext
 
 conf = SparkConf()
@@ -21,6 +22,12 @@ wordCounts = words.map(lambda x: (x, 1)).reduceByKey(lambda x, y: x + y)
 wordCountsSorted = wordCounts.map(lambda x, y: (y, x)).sortByKey()
 
 results = wordCountsSorted.collect()
+
+for result in results:
+    count = str(result[0])
+    word = result[1].encode("ascii", "ignore")
+    if (word):
+        print(word, count)
 
 wordCountsSorted.map(lambda x: '\t'.join([x[1], str(x[0])])).saveAsTextFile(
     "hdfs://master:9000/python_word_count_output")
